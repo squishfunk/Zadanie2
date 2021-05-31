@@ -23,7 +23,7 @@ class ProjectsController extends Controller
             $projects = DB::table('projects')
                 ->join('project_groups', 'project_groups.project_id', '=', 'projects.id')
                 ->join('project_group_campaigns', 'project_group_campaigns.project_group_id', '=', 'project_groups.id')
-                ->select('projects.name as projectName', 'project_groups.name as project_groupName', 'project_group_campaigns.name as project_group_campaignsName', 'projects.website', 'projects.active')
+                ->select('projects.name as projectName', 'project_groups.name as project_groupName', 'project_group_campaigns.name as project_group_campaignsName', 'projects.website', 'projects.active', 'project_group_campaigns.id')
                 ->where('projects.active', '1')
                 ->paginate(20)
                 ->appends('active', request('active'));
@@ -31,7 +31,7 @@ class ProjectsController extends Controller
             $projects = DB::table('projects')
                 ->join('project_groups', 'project_groups.project_id', '=', 'projects.id')
                 ->join('project_group_campaigns', 'project_group_campaigns.project_group_id', '=', 'project_groups.id')
-                ->select('projects.name as projectName', 'project_groups.name as project_groupName', 'project_group_campaigns.name as project_group_campaignsName', 'projects.website', 'projects.active')
+                ->select('projects.name as projectName', 'project_groups.name as project_groupName', 'project_group_campaigns.name as project_group_campaignsName', 'projects.website', 'projects.active', 'project_group_campaigns.id')
                 ->where('projects.active', '2')
                 ->paginate(20)
                 ->appends('active', request('active'));
@@ -39,7 +39,7 @@ class ProjectsController extends Controller
             $projects = DB::table('projects')
                 ->join('project_groups', 'project_groups.project_id', '=', 'projects.id')
                 ->join('project_group_campaigns', 'project_group_campaigns.project_group_id', '=', 'project_groups.id')
-                ->select('projects.name as projectName', 'project_groups.name as project_groupName', 'project_group_campaigns.name as project_group_campaignsName', 'projects.website', 'projects.active')
+                ->select('projects.name as projectName', 'project_groups.name as project_groupName', 'project_group_campaigns.name as project_group_campaignsName', 'projects.website', 'projects.active', 'project_group_campaigns.id')
                 ->where('projects.active', '0')
                 ->paginate(20)
                 ->appends('active', request('active'));
@@ -47,77 +47,54 @@ class ProjectsController extends Controller
             $projects = DB::table('projects')
                 ->join('project_groups', 'project_groups.project_id', '=', 'projects.id')
                 ->join('project_group_campaigns', 'project_group_campaigns.project_group_id', '=', 'project_groups.id')
-                ->select('projects.name as projectName', 'project_groups.name as project_groupName', 'project_group_campaigns.name as project_group_campaignsName', 'projects.website', 'projects.active')
+                ->select('projects.name as projectName', 'project_groups.name as project_groupName', 'project_group_campaigns.name as project_group_campaignsName', 'projects.website', 'projects.active', 'project_group_campaigns.id')
                 ->paginate(20);
         }
 
-        return dd($projects);
-        // return view('projects.index', ['projects' => $projects]);
+        // return dd($projects);
+        return view('projects.index', ['projects' => $projects]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        //
+        $project = DB::table('projects')
+            ->join('project_groups', 'project_groups.project_id', '=', 'projects.id')
+            ->join('project_group_campaigns', 'project_group_campaigns.project_group_id', '=', 'project_groups.id')
+            ->select('projects.name as projectName', 'project_groups.name as project_groupName', 'project_group_campaigns.name as project_group_campaignsName', 'projects.website', 'projects.active', 'project_group_campaigns.date_start', 'project_group_campaigns.id')
+            ->where('project_group_campaigns.id', "=", $id)
+            ->get();
+
+        // return dd($project[0]);
+        return view('projects.edit', ['project' => $project[0]]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update($id)
     {
-        //
+        DB::table('projects')
+            ->join('project_groups', 'project_groups.project_id', '=', 'projects.id')
+            ->join('project_group_campaigns', 'project_group_campaigns.project_group_id', '=', 'project_groups.id')
+            //->select('projects.name as projectName', 'project_groups.name as project_groupName', 'project_group_campaigns.name as project_group_campaignsName', 'projects.website', 'projects.active', 'project_group_campaigns.date_start', 'project_group_campaigns.id')
+            ->where('project_group_campaigns.id', "=", $id)
+            ->update([
+                "projects.name" => request('name'),
+                "project_groups.name" => request('groupName'),
+                "project_group_campaigns.name" => request('campaignName'),
+                "website" => request('address'),
+                "active" => request('active'),
+                "date_start" => request('date'),
+            ]);
+
+        return redirect('/projekty');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
+        DB::table('projects')
+            ->join('project_groups', 'project_groups.project_id', '=', 'projects.id')
+            ->join('project_group_campaigns', 'project_group_campaigns.project_group_id', '=', 'project_groups.id')
+            ->select('projects.name as projectName', 'project_groups.name as project_groupName', 'project_group_campaigns.name as project_group_campaignsName', 'projects.website', 'projects.active', 'project_group_campaigns.date_start', 'project_group_campaigns.id')
+            ->where('project_group_campaigns.id', "=", $id)
+            ->delete();
+        return redirect("/projekty");
     }
 }

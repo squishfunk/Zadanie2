@@ -17,12 +17,13 @@
 </head>
 
 <body>
-
+    <button>Dodaj</button>
     <label>Pokaż: </label>
     <a href="?active=all">Wszystko</a>
     <a href="?active=1">Aktywne</a>
     <a href="?active=2">W trakcie realizacji</a>
     <a href="?active=0">Nieaktywne</a>
+
     <table>
         <tr>
             <td>Nazwa projektu</td>
@@ -44,7 +45,8 @@
                     } else {
                     echo 'W trakcie realizacji';
                     } ?></td>
-                <td><a href="#">EDYTUJ</a></td>
+                <td><a href="{{ $project->id }}/edit">EDYTUJ</a></td>
+                <td><a href="{{ $project->id }}/destroy"> @method('DELETE')USUŃ</a></td>
             </tr>
         @endforeach
     </table>
