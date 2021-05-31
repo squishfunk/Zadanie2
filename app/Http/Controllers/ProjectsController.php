@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-// use App\Models\Project;
-// use App\Models\Project_group;
-// use App\Models\Project_group_campaign;
+use App\Models\Project;
+use App\Models\Project_group;
+use App\Models\Project_group_campaign;
 
 class ProjectsController extends Controller
 {
@@ -96,5 +96,25 @@ class ProjectsController extends Controller
             ->where('project_group_campaigns.id', "=", $id)
             ->delete();
         return redirect("/projekty");
+    }
+    public function create()
+    {
+        return view('projects.create');
+    }
+
+    public function store()
+    {
+        request()->validate([
+            'name' => 'required',
+            'website' => 'required',
+        ]);
+
+        Project::create([
+            'active' => request('active'),
+            'website' => request('website'),
+            'name' => request('name'),
+        ]);
+
+        return redirect('/projekty');
     }
 }

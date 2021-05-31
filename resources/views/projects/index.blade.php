@@ -17,7 +17,7 @@
 </head>
 
 <body>
-    <button>Dodaj</button>
+    <a href="/projekty/create">Dodaj</a><br>
     <label>Pokaż: </label>
     <a href="?active=all">Wszystko</a>
     <a href="?active=1">Aktywne</a>
